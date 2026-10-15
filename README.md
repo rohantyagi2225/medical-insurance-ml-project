@@ -1,94 +1,75 @@
 # Medical Insurance Cost Prediction
 
-An end-to-end machine learning project that explores and predicts medical insurance charges from demographic and lifestyle features. It includes an exploratory notebook, a model comparison, and a Streamlit prediction interface.
+An end-to-end machine learning portfolio project to estimate historical medical insurance charges from age, BMI, smoking status, number of children, sex, and region. Includes exploratory analysis, regression evaluation, a reusable model pipeline, and a Streamlit interface.
 
-> **Educational use only.** Predictions are estimates from a historical dataset and are not medical advice, a quote from an insurer, or a basis for real underwriting or pricing decisions.
+> **Educational use only.** This project is not medical advice, an insurer quote, or a tool for real insurance underwriting or pricing decisions.
 
-## Project at a glance
+## Dataset — no manual upload required
 
-- **Dataset:** 1,338 records
-- **Features:** age, sex, BMI, number of children, smoking status, and region
-- **Target:** medical insurance charges
-- **Models compared:** Linear Regression and Random Forest
-- **Evaluation:** R² and RMSE
-- **Interface:** Streamlit
+The training script downloads the commonly used Medical Cost Personal Dataset automatically from a public CSV mirror at runtime. You do not need to find or upload `insurance.csv` yourself.
 
-## Model results
+- **Target:** `charges`
+- **Features:** `age`, `sex`, `bmi`, `children`, `smoker`, `region`
+- **Dataset size:** typically 1,338 records
+- **Source URL used by the script:** [insurance.csv](https://raw.githubusercontent.com/stedy/Machine-Learning-with-R-datasets/master/insurance.csv)
 
-The results recorded in the project notebook/README are:
-
-| Model | R² | RMSE |
-|---|---:|---:|
-| Linear Regression | 0.78 | ~5,796 |
-| Random Forest | **0.86** | **~4,567** |
-
-Random Forest had the stronger recorded scores on this evaluation. These are historical project results; rerun the notebook to verify them against the current code and environment before comparing model versions.
+The public mirror is a convenience, not a guarantee of permanent availability. Verify the source and dataset schema before using it.
 
 ## Workflow
 
 ```mermaid
 flowchart TD
-    A[Insurance dataset] --> B[Data quality checks]
-    B --> C[Exploratory data analysis]
-    C --> D[Feature encoding and preparation]
-    D --> E[Train/test split]
-    E --> F[Linear Regression]
-    E --> G[Random Forest]
-    F --> H[Evaluate with R² and RMSE]
-    G --> H
-    H --> I[Select and save model]
-    I --> J[Streamlit prediction interface]
+    A[Download public CSV] --> B[Validate columns and clean rows]
+    B --> C[Train/test split]
+    C --> D[Preprocessing pipeline]
+    D --> E[Random Forest regression]
+    E --> F[Evaluate R² and RMSE]
+    E --> G[Save insurance_model.pkl]
+    G --> H[Streamlit prediction app]
 ```
+
+## Quick start — Google Colab or local Python
+
+### 1. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Train the model (downloads data automatically)
+
+```bash
+python train_model.py
+```
+
+The script reports held-out test R² and RMSE, then writes `insurance_model.pkl`. The complete preprocessing and model pipeline are saved together, so the app can process the raw user inputs consistently.
+
+### 3. Launch the app
+
+```bash
+streamlit run app.py
+```
+
+In Google Colab, you can run the training script in a notebook cell with `!python train_model.py`. To run Streamlit in Colab, you need a suitable tunnel or deployment setup; the simplest local run is on your computer.
 
 ## Repository contents
 
-- `Medical_Insurance_Cost_Prediction_End_to_End.ipynb` — end-to-end analysis and model comparison
+- `Medical_Insurance_Cost_Prediction_End_to_End.ipynb` — exploratory analysis and model comparison notebook
+- `train_model.py` — reproducible training script with automatic dataset download
 - `app.py` — Streamlit prediction interface
-- `insurance_model.pkl` — serialized model artifact
+- `insurance_model.pkl` — saved model artifact (regenerate with `train_model.py` if it does not match the current pipeline)
 
-## Run locally
+## Model evaluation
 
-Requires Python 3.10+ and the model artifact included in this repository.
-
-```bash
-git clone https://github.com/rohantyagi2225/medical-insurance-ml-project.git
-cd medical-insurance-ml-project
-python -m venv .venv
-```
-
-Activate the environment, then install dependencies and launch the app:
-
-**Windows PowerShell**
-```powershell
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-streamlit run app.py
-```
-
-**macOS/Linux**
-```bash
-source .venv/bin/activate
-pip install -r requirements.txt
-streamlit run app.py
-```
-
-To reproduce the analysis, open the notebook in Jupyter or Google Colab and run its cells in order.
-
-## Key observations
-
-- Insurance charges are right-skewed in the commonly used dataset.
-- Smoking status is an important predictive feature in the recorded analysis.
-- Random Forest captured patterns better than the linear baseline on the reported test metrics.
-
-These are associations in the dataset, not evidence that a feature causes a particular cost.
+The notebook contains historical recorded scores for earlier versions of the workflow. Do not treat them as the results of the current training script. Run `train_model.py` to get fresh metrics for the current split, preprocessing, and model version.
 
 ## Limitations and responsible use
 
-- The dataset is small and historical; results may not generalize to current populations or insurance markets.
-- Performance depends on the split, preprocessing, and model artifact version.
-- R² and RMSE alone do not establish fairness, stability, or suitability for real pricing.
+- The dataset is small and historical; it may not generalize to current populations or insurance markets.
+- Correlation and feature importance do not prove causation.
+- R² and RMSE do not establish fairness, stability, or suitability for real-world pricing.
 - Do not use this educational model to make consequential decisions about real people.
-- Only load trusted pickle files. Pickle artifacts can execute code when deserialized; retrain from a trusted source if provenance is uncertain.
+- Only load trusted pickle files: deserializing an untrusted pickle can execute code.
 
 ## Author
 
